@@ -10,10 +10,10 @@ final class Item
     public int $sell_in;
     public int $quality;
 
-    public function __construct(string $name, int $sellIn, int $quality)
+    public function __construct(string $name, int $sell_in, int $quality)
     {
         $this->name = $name;
-        $this->sell_in = $sellIn;
+        $this->sell_in = $sell_in;
         $this->quality = $quality;
     }
 
