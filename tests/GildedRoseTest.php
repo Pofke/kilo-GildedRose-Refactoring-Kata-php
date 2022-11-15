@@ -22,7 +22,7 @@ class GildedRoseTest extends TestCase
     /**
      * @dataProvider systemDataProvider
      */
-    public function testAllSystemIsCorrect(
+    public function testItemsCanCalculateSellInAndQualityCorrect(
         string $name,
         int $sellIn,
         int $quality,
@@ -39,7 +39,7 @@ class GildedRoseTest extends TestCase
 
     public function systemDataProvider(): \Generator
     {
-        yield 'testAgedBrieTypeBeforeSellInDateUpdatesNormally' => [
+        yield 'AgedBrie item example 1' => [
             'name' => 'Aged Brie',
             'sellIn' => 10,
             'quality' => 10,
@@ -47,7 +47,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 11
         ];
 
-        yield 'testAgedBrieTypeOnSellInDateUpdatesNormally' => [
+        yield 'AgedBrie item example 2' => [
             'name' => 'Aged Brie',
             'sell_in' => 0,
             'quality' => 10,
@@ -55,7 +55,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 12
         ];
 
-        yield 'testAgedBrieTypeAfterSellInDateUpdatesNormally' => [
+        yield 'AgedBrie item example 3' => [
             'name' => 'Aged Brie',
             'sell_in' => -5,
             'quality' => 10,
@@ -63,7 +63,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 12
         ];
 
-        yield 'testAgedBrieTypeBeforeSellInDateWithMaximumQuality' => [
+        yield 'AgedBrie item example 4' => [
             'name' => 'Aged Brie',
             'sell_in' => 5,
             'quality' => 50,
@@ -71,7 +71,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 50
         ];
 
-        yield 'testAgedBrieTypeOnSellInDateNearMaximumQuality' => [
+        yield 'AgedBrie item example 5' => [
             'name' => 'Aged Brie',
             'sell_in' => 0,
             'quality' => 49,
@@ -79,7 +79,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 50
         ];
 
-        yield 'testAgedBrieTypeOnSellInDateWithMaximumQuality' => [
+        yield 'AgedBrie item example 6' => [
             'name' => 'Aged Brie',
             'sell_in' => 0,
             'quality' => 50,
@@ -87,7 +87,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 50
         ];
 
-        yield 'testAgedBrieTypeAfterSellInDateWithMaximumQuality' => [
+        yield 'AgedBrie item example 7' => [
             'name' => 'Aged Brie',
             'sell_in' => -10,
             'quality' => 50,
@@ -95,7 +95,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 50
         ];
 
-        yield 'testBackstagePassBeforeSellOnDateUpdatesNormally' => [
+        yield 'Backstage passes item example 1' => [
             'name' => 'Backstage passes to a TAFKAL80ETC concert',
             'sell_in' => 10,
             'quality' => 10,
@@ -103,7 +103,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 12
         ];
 
-        yield 'testBackstagePassMoreThanTenDaysBeforeSellOnDateUpdatesNormally' => [
+        yield 'Backstage passes item example 2' => [
             'name' => 'Backstage passes to a TAFKAL80ETC concert',
             'sell_in' => 11,
             'quality' => 10,
@@ -111,7 +111,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 11
         ];
 
-        yield 'testBackstagePassUpdatesByThreeWithFiveDaysLeftToSell' => [
+        yield 'Backstage passes item example 3' => [
             'name' => 'Backstage passes to a TAFKAL80ETC concert',
             'sell_in' => 5,
             'quality' => 10,
@@ -119,7 +119,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 13
         ];
 
-        yield 'testBackstagePassDropsToZeroAfterSellInDate' => [
+        yield 'Backstage passes item example 4' => [
             'name' => 'Backstage passes to a TAFKAL80ETC concert',
             'sell_in' => 0,
             'quality' => 10,
@@ -127,7 +127,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 0
         ];
 
-        yield 'testBackstagePassCloseToSellInDateWithMaxQuality' => [
+        yield 'Backstage passes item example 5' => [
             'name' => 'Backstage passes to a TAFKAL80ETC concert',
             'sell_in' => 10,
             'quality' => 50,
@@ -135,7 +135,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 50
         ];
 
-        yield 'testBackstagePassVeryCloseToSellInDateWithMaxQuality' => [
+        yield 'Backstage passes item example 6' => [
             'name' => 'Backstage passes to a TAFKAL80ETC concert',
             'sell_in' => 5,
             'quality' => 50,
@@ -143,7 +143,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 50
         ];
 
-        yield 'testBackstagePassQualityZeroAfterSellDate' => [
+        yield 'Backstage passes item example 7' => [
             'name' => 'Backstage passes to a TAFKAL80ETC concert',
             'sell_in' => -5,
             'quality' => 50,
@@ -151,7 +151,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 0
         ];
 
-        yield 'testSulfurasBeforeSellInDate' => [
+        yield 'Sulfuras item example 1' => [
             'name' => 'Sulfuras, Hand of Ragnaros',
             'sell_in' => 10,
             'quality' => 10,
@@ -159,7 +159,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 10
         ];
 
-        yield 'testSulfurasOnSellInDate' => [
+        yield 'Sulfuras item example 2' => [
             'name' => 'Sulfuras, Hand of Ragnaros',
             'sell_in' => 0,
             'quality' => 10,
@@ -167,7 +167,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 10
         ];
 
-        yield 'testSulfurasAfterSellInDate' => [
+        yield 'Sulfuras item example 3' => [
             'name' => 'Sulfuras, Hand of Ragnaros',
             'sell_in' => -1,
             'quality' => 10,
@@ -175,7 +175,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 10
         ];
 
-        yield 'testElixirBeforeSellInDateUpdatesNormally' => [
+        yield 'Elixir item example' => [
             'name' => 'Elixir of the Mongoose',
             'sell_in' => 10,
             'quality' => 10,
@@ -183,7 +183,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 9
         ];
 
-        yield 'testDexterityVestBeforeSellInDateUpdatesNormally' => [
+        yield 'Dexterity item example 1' => [
             'name' => '+5 Dexterity Vest',
             'sell_in' => 10,
             'quality' => 10,
@@ -191,7 +191,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 9
         ];
 
-        yield 'testDexterityVestOnSellInDateQualityDegradesTwiceAsFast' => [
+        yield 'Dexterity item example 2' => [
             'name' => '+5 Dexterity Vest',
             'sell_in' => 0,
             'quality' => 10,
@@ -199,7 +199,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 8
         ];
 
-        yield 'testDexterityVestAfterSellInDateQualityDegradesTwiceAsFast' => [
+        yield 'Dexterity item example 3' => [
             'name' => '+5 Dexterity Vest',
             'sell_in' => -1,
             'quality' => 10,
@@ -207,7 +207,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 8
         ];
 
-        yield 'testConjuredBeforeSellInDateUpdatesNormally' => [
+        yield 'Conjured Mana Cake item example 1' => [
             'name' => 'Conjured Mana Cake',
             'sell_in' => 10,
             'quality' => 10,
@@ -215,7 +215,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 8
         ];
 
-        yield 'testConjuredDoesNotDegradePassedZero' => [
+        yield 'Conjured Mana Cake item example 2' => [
             'name' => 'Conjured Mana Cake',
             'sell_in' => 10,
             'quality' => 0,
@@ -223,7 +223,7 @@ class GildedRoseTest extends TestCase
             'expectQuality' => 0
         ];
 
-        yield 'testConjuredAfterSellInDateDegradesTwiceAsFast' => [
+        yield 'Conjured Mana Cake item example 3' => [
             'name' => 'Conjured Mana Cake',
             'sell_in' => 0,
             'quality' => 10,
