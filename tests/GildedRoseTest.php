@@ -19,245 +19,216 @@ class GildedRoseTest extends TestCase
     }
 
 
-    public function testAgedBrieTypeBeforeSellInDateUpdatesNormally(): void
-    {
-        $items = [new Item('Aged Brie', 10, 10), new Item('Aged Brie', 0, 10)];
+    /**
+     * @dataProvider systemDataProvider
+     */
+    public function testAllSystemIsCorrect(
+        string $name,
+        int $sellIn,
+        int $quality,
+        int $expectSellIn,
+        int $expectQuality
+    ): void {
+        $items = [new Item($name, $sellIn, $quality)];
         $gildedRose = new GildedRose($items);
         $gildedRose->updateQuality();
 
-        $this->assertEquals(11, $items[0]->quality);
-        $this->assertEquals(9, $items[0]->sell_in);
-
-
-        $this->assertEquals(12, $items[1]->quality);
-        $this->assertEquals(-1, $items[1]->sell_in);
+        $this->assertEquals($expectQuality, $items[0]->quality);
+        $this->assertEquals($expectSellIn, $items[0]->sell_in);
     }
 
-    public function testAgedBrieTypeOnSellInDateUpdatesNormally(): void
+    public function systemDataProvider(): \Generator
     {
-        $items = [new Item('Aged Brie', 0, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
+        yield 'testAgedBrieTypeBeforeSellInDateUpdatesNormally' => [
+            'name' => 'Aged Brie',
+            'sellIn' => 10,
+            'quality' => 10,
+            'expectSellIn' => 9,
+            'expectQuality' => 11
+        ];
 
-        $this->assertEquals(12, $items[0]->quality);
-        $this->assertEquals(-1, $items[0]->sell_in);
-    }
+        yield 'testAgedBrieTypeOnSellInDateUpdatesNormally' => [
+            'name' => 'Aged Brie',
+            'sell_in' => 0,
+            'quality' => 10,
+            'expectSellIn' => -1,
+            'expectQuality' => 12
+        ];
 
-    public function testAgedBrieTypeAfterSellInDateUpdatesNormally(): void
-    {
-        $items = [new Item('Aged Brie', -5, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
+        yield 'testAgedBrieTypeAfterSellInDateUpdatesNormally' => [
+            'name' => 'Aged Brie',
+            'sell_in' => -5,
+            'quality' => 10,
+            'expectSellIn' => -6,
+            'expectQuality' => 12
+        ];
 
-        $this->assertEquals(12, $items[0]->quality);
-        $this->assertEquals(-6, $items[0]->sell_in);
-    }
+        yield 'testAgedBrieTypeBeforeSellInDateWithMaximumQuality' => [
+            'name' => 'Aged Brie',
+            'sell_in' => 5,
+            'quality' => 50,
+            'expectSellIn' => 4,
+            'expectQuality' => 50
+        ];
 
-    public function testAgedBrieTypeBeforeSellInDateWithMaximumQuality(): void
-    {
-        $items = [new Item('Aged Brie', 5, 50)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
+        yield 'testAgedBrieTypeOnSellInDateNearMaximumQuality' => [
+            'name' => 'Aged Brie',
+            'sell_in' => 0,
+            'quality' => 49,
+            'expectSellIn' => -1,
+            'expectQuality' => 50
+        ];
 
-        $this->assertEquals(50, $items[0]->quality);
-        $this->assertEquals(4, $items[0]->sell_in);
-    }
+        yield 'testAgedBrieTypeOnSellInDateWithMaximumQuality' => [
+            'name' => 'Aged Brie',
+            'sell_in' => 0,
+            'quality' => 50,
+            'expectSellIn' => -1,
+            'expectQuality' => 50
+        ];
 
-    public function testAgedBrieTypeOnSellInDateNearMaximumQuality(): void
-    {
-        $items = [new Item('Aged Brie', 0, 49)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
+        yield 'testAgedBrieTypeAfterSellInDateWithMaximumQuality' => [
+            'name' => 'Aged Brie',
+            'sell_in' => -10,
+            'quality' => 50,
+            'expectSellIn' => -11,
+            'expectQuality' => 50
+        ];
 
-        $this->assertEquals(50, $items[0]->quality);
-        $this->assertEquals(-1, $items[0]->sell_in);
-    }
+        yield 'testBackstagePassBeforeSellOnDateUpdatesNormally' => [
+            'name' => 'Backstage passes to a TAFKAL80ETC concert',
+            'sell_in' => 10,
+            'quality' => 10,
+            'expectSellIn' => 9,
+            'expectQuality' => 12
+        ];
 
-    public function testAgedBrieTypeOnSellInDateWithMaximumQuality(): void
-    {
-        $items = [new Item('Aged Brie', 0, 50)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
+        yield 'testBackstagePassMoreThanTenDaysBeforeSellOnDateUpdatesNormally' => [
+            'name' => 'Backstage passes to a TAFKAL80ETC concert',
+            'sell_in' => 11,
+            'quality' => 10,
+            'expectSellIn' => 10,
+            'expectQuality' => 11
+        ];
 
-        $this->assertEquals(50, $items[0]->quality);
-        $this->assertEquals(-1, $items[0]->sell_in);
-    }
+        yield 'testBackstagePassUpdatesByThreeWithFiveDaysLeftToSell' => [
+            'name' => 'Backstage passes to a TAFKAL80ETC concert',
+            'sell_in' => 5,
+            'quality' => 10,
+            'expectSellIn' => 4,
+            'expectQuality' => 13
+        ];
 
-    public function testAgedBrieTypeAfterSellInDateWithMaximumQuality(): void
-    {
-        $items = [new Item('Aged Brie', -10, 50)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
+        yield 'testBackstagePassDropsToZeroAfterSellInDate' => [
+            'name' => 'Backstage passes to a TAFKAL80ETC concert',
+            'sell_in' => 0,
+            'quality' => 10,
+            'expectSellIn' => -1,
+            'expectQuality' => 0
+        ];
 
-        $this->assertEquals(50, $items[0]->quality);
-        $this->assertEquals(-11, $items[0]->sell_in);
-    }
+        yield 'testBackstagePassCloseToSellInDateWithMaxQuality' => [
+            'name' => 'Backstage passes to a TAFKAL80ETC concert',
+            'sell_in' => 10,
+            'quality' => 50,
+            'expectSellIn' => 9,
+            'expectQuality' => 50
+        ];
 
-    public function testBackstagePassBeforeSellOnDateUpdatesNormally(): void
-    {
-        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 10, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
+        yield 'testBackstagePassVeryCloseToSellInDateWithMaxQuality' => [
+            'name' => 'Backstage passes to a TAFKAL80ETC concert',
+            'sell_in' => 5,
+            'quality' => 50,
+            'expectSellIn' => 4,
+            'expectQuality' => 50
+        ];
 
-        $this->assertEquals(12, $items[0]->quality);
-        $this->assertEquals(9, $items[0]->sell_in);
-    }
+        yield 'testBackstagePassQualityZeroAfterSellDate' => [
+            'name' => 'Backstage passes to a TAFKAL80ETC concert',
+            'sell_in' => -5,
+            'quality' => 50,
+            'expectSellIn' => -6,
+            'expectQuality' => 0
+        ];
 
-    public function testBackstagePassMoreThanTenDaysBeforeSellOnDateUpdatesNormally(): void
-    {
-        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 11, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
+        yield 'testSulfurasBeforeSellInDate' => [
+            'name' => 'Sulfuras, Hand of Ragnaros',
+            'sell_in' => 10,
+            'quality' => 10,
+            'expectSellIn' => 10,
+            'expectQuality' => 10
+        ];
 
-        $this->assertEquals(11, $items[0]->quality);
-        $this->assertEquals(10, $items[0]->sell_in);
-    }
+        yield 'testSulfurasOnSellInDate' => [
+            'name' => 'Sulfuras, Hand of Ragnaros',
+            'sell_in' => 0,
+            'quality' => 10,
+            'expectSellIn' => 0,
+            'expectQuality' => 10
+        ];
 
-    public function testBackstagePassUpdatesByThreeWithFiveDaysLeftToSell(): void
-    {
-        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 5, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
+        yield 'testSulfurasAfterSellInDate' => [
+            'name' => 'Sulfuras, Hand of Ragnaros',
+            'sell_in' => -1,
+            'quality' => 10,
+            'expectSellIn' => -1,
+            'expectQuality' => 10
+        ];
 
-        $this->assertEquals(13, $items[0]->quality);
-        $this->assertEquals(4, $items[0]->sell_in);
-    }
+        yield 'testElixirBeforeSellInDateUpdatesNormally' => [
+            'name' => 'Elixir of the Mongoose',
+            'sell_in' => 10,
+            'quality' => 10,
+            'expectSellIn' => 9,
+            'expectQuality' => 9
+        ];
 
-    public function testBackstagePassDropsToZeroAfterSellInDate(): void
-    {
-        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 0, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
+        yield 'testDexterityVestBeforeSellInDateUpdatesNormally' => [
+            'name' => '+5 Dexterity Vest',
+            'sell_in' => 10,
+            'quality' => 10,
+            'expectSellIn' => 9,
+            'expectQuality' => 9
+        ];
 
-        $this->assertEquals(0, $items[0]->quality);
-        $this->assertEquals(-1, $items[0]->sell_in);
-    }
+        yield 'testDexterityVestOnSellInDateQualityDegradesTwiceAsFast' => [
+            'name' => '+5 Dexterity Vest',
+            'sell_in' => 0,
+            'quality' => 10,
+            'expectSellIn' => -1,
+            'expectQuality' => 8
+        ];
 
-    public function testBackstagePassCloseToSellInDateWithMaxQuality(): void
-    {
-        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 10, 50)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
+        yield 'testDexterityVestAfterSellInDateQualityDegradesTwiceAsFast' => [
+            'name' => '+5 Dexterity Vest',
+            'sell_in' => -1,
+            'quality' => 10,
+            'expectSellIn' => -2,
+            'expectQuality' => 8
+        ];
 
-        $this->assertEquals(50, $items[0]->quality);
-        $this->assertEquals(9, $items[0]->sell_in);
-    }
+        yield 'testConjuredBeforeSellInDateUpdatesNormally' => [
+            'name' => 'Conjured Mana Cake',
+            'sell_in' => 10,
+            'quality' => 10,
+            'expectSellIn' => 9,
+            'expectQuality' => 8
+        ];
 
-    public function testBackstagePassVeryCloseToSellInDateWithMaxQuality(): void
-    {
-        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', 5, 50)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
+        yield 'testConjuredDoesNotDegradePassedZero' => [
+            'name' => 'Conjured Mana Cake',
+            'sell_in' => 10,
+            'quality' => 0,
+            'expectSellIn' => 9,
+            'expectQuality' => 0
+        ];
 
-        $this->assertEquals(50, $items[0]->quality);
-        $this->assertEquals(4, $items[0]->sell_in);
-    }
-
-    public function testBackstagePassQualityZeroAfterSellDate(): void
-    {
-        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', -5, 50)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
-
-        $this->assertEquals(0, $items[0]->quality);
-        $this->assertEquals(-6, $items[0]->sell_in);
-    }
-
-    public function testSulfurasBeforeSellInDate(): void
-    {
-        $items = [new Item('Sulfuras, Hand of Ragnaros', 10, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
-
-        $this->assertEquals(10, $items[0]->quality);
-        $this->assertEquals(10, $items[0]->sell_in);
-    }
-
-    public function testSulfurasOnSellInDate(): void
-    {
-        $items = [new Item('Sulfuras, Hand of Ragnaros', 0, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
-
-        $this->assertEquals(10, $items[0]->quality);
-        $this->assertEquals(0, $items[0]->sell_in);
-    }
-
-    public function testSulfurasAfterSellInDate(): void
-    {
-        $items = [new Item('Sulfuras, Hand of Ragnaros', -1, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
-
-        $this->assertEquals(10, $items[0]->quality);
-        $this->assertEquals(-1, $items[0]->sell_in);
-    }
-
-    public function testElixirBeforeSellInDateUpdatesNormally(): void
-    {
-        $items = [new Item('Elixir of the Mongoose', 10, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
-
-        $this->assertEquals(9, $items[0]->quality);
-        $this->assertEquals(9, $items[0]->sell_in);
-    }
-
-    public function testDexterityVestBeforeSellInDateUpdatesNormally(): void
-    {
-        $items = [new Item('+5 Dexterity Vest', 10, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
-
-        $this->assertEquals(9, $items[0]->quality);
-        $this->assertEquals(9, $items[0]->sell_in);
-    }
-    public function testDexterityVestOnSellInDateQualityDegradesTwiceAsFast(): void
-    {
-        $items = [new Item('+5 Dexterity Vest', 0, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
-
-        $this->assertEquals(8, $items[0]->quality);
-        $this->assertEquals(-1, $items[0]->sell_in);
-    }
-
-    public function testDexterityVestAfterSellInDateQualityDegradesTwiceAsFast(): void
-    {
-        $items = [new Item('+5 Dexterity Vest', -1, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
-
-        $this->assertEquals(8, $items[0]->quality);
-        $this->assertEquals(-2, $items[0]->sell_in);
-    }
-
-    public function testConjuredBeforeSellInDateUpdatesNormally()
-    {
-
-        $items = [new Item('Conjured Mana Cake', 10, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
-
-        $this->assertEquals(8, $items[0]->quality);
-        $this->assertEquals(9, $items[0]->sell_in);
-    }
-    public function testConjuredDoesNotDegradePassedZero()
-    {
-        $items = [new Item('Conjured Mana Cake', 10, 0)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
-
-        $this->assertEquals(0, $items[0]->quality);
-        $this->assertEquals(9, $items[0]->sell_in);
-    }
-    public function testConjuredAfterSellInDateDegradesTwiceAsFast()
-    {
-        $items = [new Item('Conjured Mana Cake', 0, 10)];
-        $gildedRose = new GildedRose($items);
-        $gildedRose->updateQuality();
-
-        $this->assertEquals(6, $items[0]->quality);
-        $this->assertEquals(-1, $items[0]->sell_in);
+        yield 'testConjuredAfterSellInDateDegradesTwiceAsFast' => [
+            'name' => 'Conjured Mana Cake',
+            'sell_in' => 0,
+            'quality' => 10,
+            'expectSellIn' => -1,
+            'expectQuality' => 6
+        ];
     }
 }
